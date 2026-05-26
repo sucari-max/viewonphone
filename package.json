@@ -1,0 +1,6 @@
+{
+  "name": "viewonphone",
+  "version": "1.0.0",
+  "description": "Preview any website in a mobile phone frame",
+  "engines": { "node": ">=18" }
+}

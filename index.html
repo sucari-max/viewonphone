@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ViewOnPhone — Preview Any Website on Mobile</title>
+  <meta name="description" content="Instantly preview any website in a realistic mobile phone frame. Test responsive designs fast." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --bg2: #1a1d27;
+      --bg3: #22263a;
+      --border: #2e3354;
+      --accent: #6c63ff;
+      --accent2: #8b83ff;
+      --text: #e8eaf6;
+      --text2: #9096b8;
+      --text3: #555f85;
+      --green: #4caf7d;
+      --red: #f56565;
+      --phone-bg: #111827;
+      --phone-border: #374151;
+      --phone-screen: #000;
+      --radius: 12px;
+      --shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .light {
+      --bg: #f0f2fa;
+      --bg2: #ffffff;
+      --bg3: #e8eaff;
+      --border: #d0d4f0;
+      --text: #1a1d2e;
+      --text2: #5561a0;
+      --text3: #8890b8;
+      --phone-bg: #1f2937;
+      --phone-border: #374151;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .logo span { color: var(--accent2); }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .btn-icon {
+      width: 36px; height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg3);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      color: var(--text2);
+      transition: all .15s;
+    }
+    .btn-icon:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── URL BAR ─── */
+    .url-bar-wrap {
+      padding: 16px 24px 0;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+    }
+    .url-row {
+      display: flex;
+      gap: 8px;
+      max-width: 900px;
+      margin: 0 auto 14px;
+    }
+    .url-input-wrap {
+      flex: 1;
+      position: relative;
+    }
+    .url-prefix {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text3);
+      font-size: 13px;
+      pointer-events: none;
+      user-select: none;
+    }
+    .url-input {
+      width: 100%;
+      height: 42px;
+      padding: 0 42px 0 14px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .url-input:focus { border-color: var(--accent); }
+    .url-input::placeholder { color: var(--text3); font-family: 'Inter', sans-serif; }
+    .url-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--text3);
+      font-size: 16px;
+      display: none;
+      background: none;
+      border: none;
+      line-height: 1;
+    }
+    .url-clear.visible { display: block; }
+    .btn-go {
+      height: 42px;
+      padding: 0 22px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+      white-space: nowrap;
+    }
+    .btn-go:hover { opacity: .9; }
+    .btn-go:active { transform: scale(.97); }
+
+    /* ─── DEVICE PICKER ─── */
+    .device-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 900px;
+      margin: 0 auto 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .device-row::-webkit-scrollbar { display: none; }
+    .device-label { font-size: 12px; color: var(--text3); white-space: nowrap; margin-right: 4px; }
+    .device-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      color: var(--text2);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    .device-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .device-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .divider-v { width: 1px; height: 20px; background: var(--border); margin: 0 4px; flex-shrink: 0; }
+    .orient-btn {
+      padding: 5px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      color: var(--text2);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all .15s;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .orient-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .orient-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ─── MAIN CONTENT ─── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px 60px;
+      overflow: hidden;
+    }
+
+    /* ─── EMPTY STATE ─── */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+      margin-top: 40px;
+    }
+    .empty-icon {
+      font-size: 64px;
+      opacity: .25;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .empty-title { font-size: 22px; font-weight: 600; color: var(--text); }
+    .empty-sub { font-size: 14px; color: var(--text3); max-width: 320px; line-height: 1.6; }
+    .sample-links { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 8px; }
+    .sample-link {
+      padding: 6px 14px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all .15s;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .sample-link:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── PHONE FRAME ─── */
+    .phone-wrap {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .phone-wrap.visible { display: flex; }
+
+    .phone-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toolbar-info {
+      font-size: 12px;
+      color: var(--text3);
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .toolbar-btn {
+      height: 30px;
+      padding: 0 12px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text2);
+      font-size: 12px;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    .toolbar-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .toolbar-btn.copied { background: var(--green); border-color: var(--green); color: #fff; }
+
+    /* phone outer shell */
+    .phone-shell {
+      position: relative;
+      background: var(--phone-bg);
+      border-radius: 44px;
+      border: 2px solid #4b5563;
+      box-shadow:
+        0 0 0 1px #1f2937,
+        0 30px 80px rgba(0,0,0,.7),
+        inset 0 1px 0 rgba(255,255,255,.08);
+      transition: all .3s ease;
+      overflow: hidden;
+    }
+    /* notch / island */
+    .phone-notch {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 30px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .notch-camera {
+      width: 10px; height: 10px;
+      background: #1c1c1e;
+      border-radius: 50%;
+      border: 1px solid #333;
+      position: relative;
+    }
+    .notch-camera::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 4px; height: 4px;
+      background: #0a84ff22;
+      border-radius: 50%;
+    }
+    .notch-speaker {
+      width: 40px; height: 4px;
+      background: #1a1a1a;
+      border-radius: 2px;
+    }
+
+    /* side buttons */
+    .phone-btn-right {
+      position: absolute;
+      right: -4px;
+      top: 100px;
+      width: 4px;
+      height: 70px;
+      background: #374151;
+      border-radius: 0 2px 2px 0;
+    }
+    .phone-btn-left-1 {
+      position: absolute;
+      left: -4px;
+      top: 80px;
+      width: 4px;
+      height: 30px;
+      background: #374151;
+      border-radius: 2px 0 0 2px;
+    }
+    .phone-btn-left-2 {
+      position: absolute;
+      left: -4px;
+      top: 130px;
+      width: 4px;
+      height: 50px;
+      background: #374151;
+      border-radius: 2px 0 0 2px;
+    }
+    .phone-btn-left-3 {
+      position: absolute;
+      left: -4px;
+      top: 195px;
+      width: 4px;
+      height: 50px;
+      background: #374151;
+      border-radius: 2px 0 0 2px;
+    }
+
+    /* screen area */
+    .phone-screen-area {
+      padding: 16px 12px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .phone-status-bar {
+      height: 44px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 8px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .status-left { min-width: 50px; }
+    .status-right {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      font-size: 11px;
+    }
+    .status-battery {
+      display: flex;
+      align-items: center;
+      gap: 1px;
+    }
+    .battery-body {
+      width: 22px; height: 11px;
+      border: 1.5px solid #fff;
+      border-radius: 3px;
+      padding: 1.5px;
+    }
+    .battery-fill {
+      width: 75%;
+      height: 100%;
+      background: #fff;
+      border-radius: 1px;
+    }
+    .battery-tip {
+      width: 2px; height: 5px;
+      background: rgba(255,255,255,.5);
+      border-radius: 0 1px 1px 0;
+    }
+
+    /* iframe container */
+    .iframe-container {
+      flex: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      position: relative;
+    }
+    #phone-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      display: block;
+    }
+    #phone-iframe.hidden { display: none; }
+    .iframe-blocked {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: #f9fafb;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    .iframe-blocked.show { display: flex; }
+    .blocked-icon { font-size: 40px; }
+    .blocked-title { font-size: 14px; font-weight: 600; color: #1f2937; }
+    .blocked-sub { font-size: 12px; color: #6b7280; line-height: 1.5; }
+    .blocked-open {
+      padding: 8px 20px;
+      background: #6c63ff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* home indicator */
+    .phone-home-bar {
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .home-indicator {
+      width: 120px;
+      height: 5px;
+      background: rgba(255,255,255,.3);
+      border-radius: 3px;
+    }
+
+    /* zoom slider */
+    .zoom-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text3);
+    }
+    .zoom-slider {
+      width: 120px;
+      -webkit-appearance: none;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+    .zoom-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    /* ─── LOADING ─── */
+    .loading-bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: transparent;
+      z-index: 20;
+      overflow: hidden;
+    }
+    .loading-bar.active {
+      background: rgba(108,99,255,.2);
+    }
+    .loading-bar.active::after {
+      content: '';
+      position: absolute;
+      left: -50%;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      background: var(--accent);
+      animation: loading 1s ease-in-out infinite;
+    }
+    @keyframes loading {
+      0% { left: -50%; }
+      100% { left: 100%; }
+    }
+
+    /* ─── FEATURES SECTION ─── */
+    .features {
+      max-width: 800px;
+      width: 100%;
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .feature-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .feature-icon { font-size: 24px; }
+    .feature-title { font-size: 14px; font-weight: 600; }
+    .feature-desc { font-size: 13px; color: var(--text3); line-height: 1.5; }
+
+    /* ─── STATUS BADGE ─── */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .badge-green { background: rgba(76,175,125,.15); color: var(--green); border: 1px solid rgba(76,175,125,.3); }
+    .badge-red { background: rgba(245,101,101,.15); color: var(--red); border: 1px solid rgba(245,101,101,.3); }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* responsive */
+    @media (max-width: 600px) {
+      .phone-toolbar { flex-wrap: wrap; justify-content: center; }
+      .features { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <a class="logo" href="#">
+      <div class="logo-icon">📱</div>
+      View<span>OnPhone</span>
+    </a>
+    <div class="header-right">
+      <button class="btn-icon" id="themeBtn" title="Toggle theme">🌙</button>
+      <a href="https://github.com" target="_blank" class="btn-icon" title="GitHub" style="text-decoration:none">⭐</a>
+    </div>
+  </header>
+
+  <!-- URL BAR -->
+  <div class="url-bar-wrap">
+    <div class="url-row">
+      <div class="url-input-wrap">
+        <input
+          type="text"
+          class="url-input"
+          id="urlInput"
+          placeholder="Enter URL — e.g. example.com or https://..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="url-clear" id="urlClear" title="Clear">✕</button>
+      </div>
+      <button class="btn-go" id="goBtn">▶ Preview</button>
+    </div>
+    <div class="device-row">
+      <span class="device-label">Device:</span>
+      <button class="device-btn active" data-w="390" data-h="844" data-name="iPhone 14">
+        🍎 iPhone 14
+      </button>
+      <button class="device-btn" data-w="375" data-h="667" data-name="iPhone SE">
+        🍎 iPhone SE
+      </button>
+      <button class="device-btn" data-w="430" data-h="932" data-name="iPhone 14 Max">
+        🍎 14 Pro Max
+      </button>
+      <button class="device-btn" data-w="360" data-h="780" data-name="Galaxy S23">
+        🤖 Galaxy S23
+      </button>
+      <button class="device-btn" data-w="412" data-h="915" data-name="Pixel 7">
+        🤖 Pixel 7
+      </button>
+      <button class="device-btn" data-w="768" data-h="1024" data-name="iPad Mini">
+        💻 iPad Mini
+      </button>
+      <div class="divider-v"></div>
+      <button class="orient-btn active" id="portraitBtn" title="Portrait">⬆ Portrait</button>
+      <button class="orient-btn" id="landscapeBtn" title="Landscape">↔ Landscape</button>
+      <div class="divider-v"></div>
+      <span class="zoom-row">
+        🔍
+        <input type="range" class="zoom-slider" id="zoomSlider" min="40" max="100" value="75" />
+        <span id="zoomLabel">75%</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main" id="main">
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">📱</div>
+      <div class="empty-title">Preview any website on mobile</div>
+      <div class="empty-sub">
+        Enter a URL above and see how it looks on a real mobile device. Perfect for rapid responsive testing.
+      </div>
+      <div class="sample-links">
+        <span class="sample-link" data-url="https://example.com">example.com</span>
+        <span class="sample-link" data-url="https://wikipedia.org">wikipedia.org</span>
+        <span class="sample-link" data-url="https://getbootstrap.com">getbootstrap.com</span>
+        <span class="sample-link" data-url="https://tailwindcss.com">tailwindcss.com</span>
+        <span class="sample-link" data-url="https://vercel.com">vercel.com</span>
+        <span class="sample-link" data-url="http://localhost:3000">localhost:3000</span>
+      </div>
+    </div>
+
+    <!-- Phone preview -->
+    <div class="phone-wrap" id="phoneWrap">
+
+      <!-- toolbar above phone -->
+      <div class="phone-toolbar">
+        <span class="toolbar-info" id="dimInfo">390 × 844</span>
+        <span class="status-badge badge-green" id="statusBadge">
+          <span class="badge-dot"></span>Live
+        </span>
+        <button class="toolbar-btn" id="reloadBtn">↺ Reload</button>
+        <button class="toolbar-btn" id="copyBtn">⎘ Copy URL</button>
+        <button class="toolbar-btn" id="openBtn">↗ Open Tab</button>
+      </div>
+
+      <!-- phone shell -->
+      <div class="phone-shell" id="phoneShell">
+        <!-- loading bar -->
+        <div class="loading-bar" id="loadingBar"></div>
+        <!-- buttons -->
+        <div class="phone-btn-right"></div>
+        <div class="phone-btn-left-1"></div>
+        <div class="phone-btn-left-2"></div>
+        <div class="phone-btn-left-3"></div>
+        <!-- screen -->
+        <div class="phone-screen-area">
+          <div class="phone-status-bar">
+            <span class="status-left" id="statusTime">9:41</span>
+            <div class="phone-notch">
+              <div class="notch-camera"></div>
+              <div class="notch-speaker"></div>
+              <div class="notch-camera"></div>
+            </div>
+            <div class="status-right">
+              <span>●●●</span>
+              <span>WiFi</span>
+              <div class="status-battery">
+                <div class="battery-body"><div class="battery-fill"></div></div>
+                <div class="battery-tip"></div>
+              </div>
+            </div>
+          </div>
+          <div class="iframe-container">
+            <div class="iframe-blocked" id="blockedMsg">
+              <div class="blocked-icon">⚠️</div>
+              <div class="blocked-title" id="blockedTitle">Could not load page</div>
+              <div class="blocked-sub" id="blockedSub">
+                Proxy server is not running. Start it with:<br/>
+                <code>node proxy-server.js</code>
+              </div>
+              <button class="blocked-open" id="blockedOpenBtn">Open in new tab ↗</button>
+            </div>
+            <iframe id="phone-iframe" loading="lazy"></iframe>
+          </div>
+          <div class="phone-home-bar">
+            <div class="home-indicator"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- zoom label below -->
+      <div style="font-size:11px;color:var(--text3);" id="scaleNote"></div>
+    </div>
+
+    <!-- feature cards (visible on empty state) -->
+    <div class="features" id="featureCards">
+      <div class="feature-card">
+        <div class="feature-icon">📐</div>
+        <div class="feature-title">Accurate Viewports</div>
+        <div class="feature-desc">Simulates exact pixel dimensions of real devices — iPhone, Android, iPad.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Instant Preview</div>
+        <div class="feature-desc">No install, no extension needed. Just paste a URL and hit Preview.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-title">Portrait & Landscape</div>
+        <div class="feature-desc">Toggle orientation with one click to test both layout modes.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌓</div>
+        <div class="feature-title">Dark / Light Mode</div>
+        <div class="feature-desc">Switch the app UI theme to match your workflow preference.</div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const urlInput   = document.getElementById('urlInput');
+    const urlClear   = document.getElementById('urlClear');
+    const goBtn      = document.getElementById('goBtn');
+    const phoneWrap  = document.getElementById('phoneWrap');
+    const emptyState = document.getElementById('emptyState');
+    const featureCards = document.getElementById('featureCards');
+    const phoneShell = document.getElementById('phoneShell');
+    const iframe     = document.getElementById('phone-iframe');
+    const loadingBar = document.getElementById('loadingBar');
+    const blockedMsg = document.getElementById('blockedMsg');
+    const blockedOpenBtn = document.getElementById('blockedOpenBtn');
+    const dimInfo    = document.getElementById('dimInfo');
+    const statusBadge = document.getElementById('statusBadge');
+    const reloadBtn  = document.getElementById('reloadBtn');
+    const copyBtn    = document.getElementById('copyBtn');
+    const openBtn    = document.getElementById('openBtn');
+    const zoomSlider = document.getElementById('zoomSlider');
+    const zoomLabel  = document.getElementById('zoomLabel');
+    const scaleNote  = document.getElementById('scaleNote');
+    const statusTime = document.getElementById('statusTime');
+    const themeBtn   = document.getElementById('themeBtn');
+
+    // State
+    let currentW = 390, currentH = 844, currentName = 'iPhone 14';
+    let isLandscape = false;
+    let zoom = 75;
+    let currentUrl = '';
+
+    // Update clock
+    function updateClock() {
+      const now = new Date();
+      let h = now.getHours(), m = now.getMinutes();
+      statusTime.textContent = `${h}:${m.toString().padStart(2,'0')}`;
+    }
+    updateClock();
+    setInterval(updateClock, 10000);
+
+    // Theme toggle
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('light');
+      themeBtn.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
+    });
+
+    // URL input
+    urlInput.addEventListener('input', () => {
+      urlClear.classList.toggle('visible', urlInput.value.length > 0);
+    });
+    urlClear.addEventListener('click', () => {
+      urlInput.value = '';
+      urlClear.classList.remove('visible');
+      urlInput.focus();
+    });
+    urlInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') loadPreview();
+    });
+
+    // Sample links
+    document.querySelectorAll('.sample-link').forEach(el => {
+      el.addEventListener('click', () => {
+        urlInput.value = el.dataset.url;
+        urlClear.classList.add('visible');
+        loadPreview();
+      });
+    });
+
+    // Go button
+    goBtn.addEventListener('click', loadPreview);
+
+    // Device buttons
+    document.querySelectorAll('.device-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentW = parseInt(btn.dataset.w);
+        currentH = parseInt(btn.dataset.h);
+        currentName = btn.dataset.name;
+        applyDevice();
+      });
+    });
+
+    // Orientation
+    document.getElementById('portraitBtn').addEventListener('click', () => {
+      isLandscape = false;
+      document.getElementById('portraitBtn').classList.add('active');
+      document.getElementById('landscapeBtn').classList.remove('active');
+      applyDevice();
+    });
+    document.getElementById('landscapeBtn').addEventListener('click', () => {
+      isLandscape = true;
+      document.getElementById('landscapeBtn').classList.add('active');
+      document.getElementById('portraitBtn').classList.remove('active');
+      applyDevice();
+    });
+
+    // Zoom
+    zoomSlider.addEventListener('input', () => {
+      zoom = parseInt(zoomSlider.value);
+      zoomLabel.textContent = zoom + '%';
+      applyDevice();
+    });
+
+    function applyDevice() {
+      let w = isLandscape ? currentH : currentW;
+      let h = isLandscape ? currentW : currentH;
+      const scale = zoom / 100;
+
+      // Extra padding for phone shell (notch, status bar, home bar, border)
+      const extraV = 100; // status bar + home bar + padding
+      const extraH = 24;  // side padding
+
+      phoneShell.style.width  = (w + extraH) + 'px';
+      phoneShell.style.height = (h + extraV) + 'px';
+      phoneShell.style.transform = `scale(${scale})`;
+      phoneShell.style.transformOrigin = 'top center';
+
+      // Adjust wrapper height so layout doesn't collapse
+      const scaledH = (h + extraV) * scale;
+      phoneWrap.style.paddingTop = '0';
+
+      dimInfo.textContent = `${w} × ${h}`;
+      scaleNote.textContent = `${currentName} — scaled to ${zoom}%`;
+
+      // set iframe size via CSS transform trick: the iframe itself is full shell width/height
+      // but we tell the site it's w×h via the container
+    }
+
+    // Reload
+    reloadBtn.addEventListener('click', () => {
+      if (currentUrl) {
+        setLoading();
+        iframe.src = '';
+        setTimeout(() => { iframe.src = proxyUrl(currentUrl); }, 50);
+      }
+    });
+
+    // Copy
+    copyBtn.addEventListener('click', () => {
+      if (currentUrl) {
+        navigator.clipboard.writeText(currentUrl).then(() => {
+          copyBtn.classList.add('copied');
+          copyBtn.textContent = '✓ Copied!';
+          setTimeout(() => {
+            copyBtn.classList.remove('copied');
+            copyBtn.textContent = '⎘ Copy URL';
+          }, 1800);
+        });
+      }
+    });
+
+    // Open tab
+    openBtn.addEventListener('click', () => {
+      if (currentUrl) window.open(currentUrl, '_blank');
+    });
+    blockedOpenBtn.addEventListener('click', () => {
+      if (currentUrl) window.open(currentUrl, '_blank');
+    });
+
+    // Normalise URL
+    function normaliseUrl(raw) {
+      raw = raw.trim();
+      if (!raw) return null;
+      if (/^localhost(:\d+)?(\/.*)?$/.test(raw)) return 'http://' + raw;
+      if (/^127\.0\.0\.1(:\d+)?(\/.*)?$/.test(raw)) return 'http://' + raw;
+      if (!/^https?:\/\//i.test(raw)) return 'https://' + raw;
+      return raw;
+    }
+
+    function proxyUrl(url) {
+      return '/proxy?url=' + encodeURIComponent(url);
+    }
+
+    function setLoading() {
+      loadingBar.classList.add('active');
+      statusBadge.innerHTML = '<span class="badge-dot"></span>Loading…';
+      statusBadge.className = 'status-badge';
+      statusBadge.style.cssText = 'background:rgba(100,100,100,.15);color:var(--text3);border:1px solid var(--border)';
+    }
+
+    function loadPreview() {
+      const url = normaliseUrl(urlInput.value);
+      if (!url) return;
+
+      currentUrl = url;
+      urlInput.value = url;
+
+      // Show phone, hide empty
+      emptyState.style.display = 'none';
+      featureCards.style.display = 'none';
+      phoneWrap.classList.add('visible');
+      iframe.classList.remove('hidden');
+      blockedMsg.classList.remove('show');
+
+      setLoading();
+      applyDevice();
+
+      // Clear previous handlers
+      iframe.onload  = null;
+      iframe.onerror = null;
+
+      // Loading timeout — proxy can take a few seconds
+      const loadTimer = setTimeout(() => {
+        loadingBar.classList.remove('active');
+        showLive(); // assume live after timeout
+      }, 20000);
+
+      iframe.onload = () => {
+        clearTimeout(loadTimer);
+        loadingBar.classList.remove('active');
+        // Since proxy is same-origin, we can inspect content
+        try {
+          const doc = iframe.contentDocument;
+          if (!doc || !doc.body || doc.body.innerHTML.trim() === '') {
+            showError('Page returned empty content.');
+          } else {
+            showLive();
+          }
+        } catch(e) {
+          showLive();
+        }
+      };
+
+      iframe.onerror = () => {
+        clearTimeout(loadTimer);
+        loadingBar.classList.remove('active');
+        showError('Cannot connect to proxy server.<br/>Run: <code>node proxy-server.js</code>');
+      };
+
+      iframe.src = proxyUrl(url);
+    }
+
+    function showLive() {
+      iframe.classList.remove('hidden');
+      blockedMsg.classList.remove('show');
+      statusBadge.innerHTML = '<span class="badge-dot"></span>Live';
+      statusBadge.className = 'status-badge badge-green';
+      statusBadge.style.cssText = '';
+    }
+
+    function showError(msg) {
+      iframe.classList.add('hidden');
+      document.getElementById('blockedTitle').textContent = 'Could not load page';
+      document.getElementById('blockedSub').innerHTML = msg;
+      blockedMsg.classList.add('show');
+      statusBadge.innerHTML = '<span class="badge-dot"></span>Error';
+      statusBadge.className = 'status-badge badge-red';
+      statusBadge.style.cssText = '';
+    }
+
+    // Init
+    applyDevice();
+
+    // Handle URL param ?url=...
+    const params = new URLSearchParams(location.search);
+    if (params.get('url')) {
+      urlInput.value = params.get('url');
+      urlClear.classList.add('visible');
+      loadPreview();
+    }
+  </script>
+</body>
+</html>
