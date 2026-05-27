@@ -70,6 +70,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- ── Screenshot ── -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -646,6 +648,96 @@
     .badge-red { background: rgba(245,101,101,.15); color: var(--red); border: 1px solid rgba(245,101,101,.3); }
     .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
+    /* ─── CATEGORY TABS ─── */
+    .cat-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      max-width: 900px;
+      margin: 0 auto 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .cat-row::-webkit-scrollbar { display: none; }
+    .cat-tab {
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text3);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    .cat-tab:hover { color: var(--text2); }
+    .cat-tab.active { background: var(--bg3); border-color: var(--border); color: var(--text); }
+    .device-search {
+      margin-left: auto;
+      height: 26px;
+      padding: 0 10px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+      width: 140px;
+      flex-shrink: 0;
+    }
+    .device-search:focus { border-color: var(--accent); }
+    .device-search::placeholder { color: var(--text3); }
+
+    /* ─── CONTROLS ROW ─── */
+    .controls-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 900px;
+      margin: 0 auto 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .controls-row::-webkit-scrollbar { display: none; }
+    .custom-size {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--text3);
+    }
+    .custom-size input[type=number] {
+      width: 54px;
+      height: 26px;
+      padding: 0 6px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      outline: none;
+      text-align: center;
+      -moz-appearance: textfield;
+    }
+    .custom-size input[type=number]:focus { border-color: var(--accent); }
+    .custom-size input[type=number]::-webkit-inner-spin-button,
+    .custom-size input[type=number]::-webkit-outer-spin-button { display: none; }
+    .btn-apply {
+      height: 26px;
+      padding: 0 10px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text2);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    .btn-apply:hover { border-color: var(--accent); color: var(--accent); }
+
     /* scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -687,33 +779,31 @@
       </div>
       <button class="btn-go" id="goBtn">▶ Preview</button>
     </div>
-    <div class="device-row">
-      <span class="device-label">Device:</span>
-      <button class="device-btn active" data-w="390" data-h="844" data-name="iPhone 14">
-        🍎 iPhone 14
-      </button>
-      <button class="device-btn" data-w="375" data-h="667" data-name="iPhone SE">
-        🍎 iPhone SE
-      </button>
-      <button class="device-btn" data-w="430" data-h="932" data-name="iPhone 14 Max">
-        🍎 14 Pro Max
-      </button>
-      <button class="device-btn" data-w="360" data-h="780" data-name="Galaxy S23">
-        🤖 Galaxy S23
-      </button>
-      <button class="device-btn" data-w="412" data-h="915" data-name="Pixel 7">
-        🤖 Pixel 7
-      </button>
-      <button class="device-btn" data-w="768" data-h="1024" data-name="iPad Mini">
-        💻 iPad Mini
-      </button>
-      <div class="divider-v"></div>
+    <!-- Category filter + search -->
+    <div class="cat-row">
+      <button class="cat-tab active" data-cat="all">All</button>
+      <button class="cat-tab" data-cat="phone">📱 Phones</button>
+      <button class="cat-tab" data-cat="tablet">📟 Tablets</button>
+      <button class="cat-tab" data-cat="desktop">🖥️ Desktop</button>
+      <input type="text" class="device-search" id="deviceSearch" placeholder="🔍 Search device…" autocomplete="off" />
+    </div>
+    <!-- Device list (populated by JS) -->
+    <div class="device-row" id="deviceList"></div>
+    <!-- Orientation + Custom size + Zoom -->
+    <div class="controls-row">
       <button class="orient-btn active" id="portraitBtn" title="Portrait">⬆ Portrait</button>
       <button class="orient-btn" id="landscapeBtn" title="Landscape">↔ Landscape</button>
       <div class="divider-v"></div>
+      <div class="custom-size">
+        <input type="number" id="customW" placeholder="W" min="200" max="3840" />
+        <span>×</span>
+        <input type="number" id="customH" placeholder="H" min="300" max="2160" />
+        <button class="btn-apply" id="customApply">✓ Apply</button>
+      </div>
+      <div class="divider-v"></div>
       <span class="zoom-row">
         🔍
-        <input type="range" class="zoom-slider" id="zoomSlider" min="40" max="100" value="75" />
+        <input type="range" class="zoom-slider" id="zoomSlider" min="30" max="100" value="75" />
         <span id="zoomLabel">75%</span>
       </span>
     </div>
@@ -750,6 +840,8 @@
         </span>
         <button class="toolbar-btn" id="reloadBtn">↺ Reload</button>
         <button class="toolbar-btn" id="copyBtn">⎘ Copy URL</button>
+        <button class="toolbar-btn" id="shareBtn">📤 Share</button>
+        <button class="toolbar-btn" id="screenshotBtn">📸 Screenshot</button>
         <button class="toolbar-btn" id="openBtn">↗ Open Tab</button>
       </div>
 
@@ -824,50 +916,136 @@
   </main>
 
   <script>
-    const urlInput   = document.getElementById('urlInput');
-    const urlClear   = document.getElementById('urlClear');
-    const goBtn      = document.getElementById('goBtn');
-    const phoneWrap  = document.getElementById('phoneWrap');
-    const emptyState = document.getElementById('emptyState');
-    const featureCards = document.getElementById('featureCards');
-    const phoneShell = document.getElementById('phoneShell');
-    const iframe     = document.getElementById('phone-iframe');
-    const loadingBar = document.getElementById('loadingBar');
-    const blockedMsg = document.getElementById('blockedMsg');
-    const blockedOpenBtn = document.getElementById('blockedOpenBtn');
-    const dimInfo    = document.getElementById('dimInfo');
-    const statusBadge = document.getElementById('statusBadge');
-    const reloadBtn  = document.getElementById('reloadBtn');
-    const copyBtn    = document.getElementById('copyBtn');
-    const openBtn    = document.getElementById('openBtn');
-    const zoomSlider = document.getElementById('zoomSlider');
-    const zoomLabel  = document.getElementById('zoomLabel');
-    const scaleNote  = document.getElementById('scaleNote');
-    const statusTime = document.getElementById('statusTime');
-    const themeBtn   = document.getElementById('themeBtn');
+    // ─── DEVICE LIST ──────────────────────────────────────────────────────────
+    const DEVICES = [
+      // Phones — Apple
+      { name:'iPhone 16 Pro',    w:393,  h:852,  cat:'phone',   icon:'🍎' },
+      { name:'iPhone 16',        w:390,  h:844,  cat:'phone',   icon:'🍎' },
+      { name:'iPhone 15 Pro Max',w:430,  h:932,  cat:'phone',   icon:'🍎' },
+      { name:'iPhone 14',        w:390,  h:844,  cat:'phone',   icon:'🍎' },
+      { name:'iPhone SE',        w:375,  h:667,  cat:'phone',   icon:'🍎' },
+      // Phones — Samsung
+      { name:'Galaxy S24 Ultra', w:412,  h:915,  cat:'phone',   icon:'🤖' },
+      { name:'Galaxy S24',       w:384,  h:832,  cat:'phone',   icon:'🤖' },
+      { name:'Galaxy S23',       w:360,  h:780,  cat:'phone',   icon:'🤖' },
+      { name:'Galaxy Z Fold 6',  w:968,  h:848,  cat:'phone',   icon:'🤖' },
+      // Phones — Google / OnePlus
+      { name:'Pixel 9 Pro',      w:412,  h:915,  cat:'phone',   icon:'🤖' },
+      { name:'Pixel 7',          w:412,  h:892,  cat:'phone',   icon:'🤖' },
+      { name:'OnePlus 12',       w:412,  h:919,  cat:'phone',   icon:'🤖' },
+      // Tablets
+      { name:'iPad Pro 12.9"',   w:1024, h:1366, cat:'tablet',  icon:'📟' },
+      { name:'iPad Air',         w:820,  h:1180, cat:'tablet',  icon:'📟' },
+      { name:'iPad Mini',        w:768,  h:1024, cat:'tablet',  icon:'📟' },
+      { name:'Galaxy Tab S9',    w:800,  h:1280, cat:'tablet',  icon:'📟' },
+      // Desktop
+      { name:'Laptop 13"',       w:1280, h:800,  cat:'desktop', icon:'🖥️' },
+      { name:'HD 1080p',         w:1920, h:1080, cat:'desktop', icon:'🖥️' },
+      { name:'2K / QHD',         w:2560, h:1440, cat:'desktop', icon:'🖥️' },
+    ];
 
-    // State
-    let currentW = 390, currentH = 844, currentName = 'iPhone 14';
+    // ─── DOM refs ─────────────────────────────────────────────────────────────
+    const urlInput      = document.getElementById('urlInput');
+    const urlClear      = document.getElementById('urlClear');
+    const goBtn         = document.getElementById('goBtn');
+    const phoneWrap     = document.getElementById('phoneWrap');
+    const emptyState    = document.getElementById('emptyState');
+    const featureCards  = document.getElementById('featureCards');
+    const phoneShell    = document.getElementById('phoneShell');
+    const iframe        = document.getElementById('phone-iframe');
+    const loadingBar    = document.getElementById('loadingBar');
+    const blockedMsg    = document.getElementById('blockedMsg');
+    const blockedOpenBtn= document.getElementById('blockedOpenBtn');
+    const dimInfo       = document.getElementById('dimInfo');
+    const statusBadge   = document.getElementById('statusBadge');
+    const reloadBtn     = document.getElementById('reloadBtn');
+    const copyBtn       = document.getElementById('copyBtn');
+    const shareBtn      = document.getElementById('shareBtn');
+    const screenshotBtn = document.getElementById('screenshotBtn');
+    const openBtn       = document.getElementById('openBtn');
+    const zoomSlider    = document.getElementById('zoomSlider');
+    const zoomLabel     = document.getElementById('zoomLabel');
+    const scaleNote     = document.getElementById('scaleNote');
+    const statusTime    = document.getElementById('statusTime');
+    const themeBtn      = document.getElementById('themeBtn');
+    const deviceList    = document.getElementById('deviceList');
+    const deviceSearch  = document.getElementById('deviceSearch');
+    const customW       = document.getElementById('customW');
+    const customH       = document.getElementById('customH');
+    const customApply   = document.getElementById('customApply');
+
+    // ─── State ────────────────────────────────────────────────────────────────
+    let currentW    = 390;
+    let currentH    = 844;
+    let currentName = 'iPhone 16';
     let isLandscape = false;
-    let zoom = 75;
-    let currentUrl = '';
+    let zoom        = 75;
+    let currentUrl  = '';
+    let currentCat  = 'all';
 
-    // Update clock
+    // ─── Clock ────────────────────────────────────────────────────────────────
     function updateClock() {
       const now = new Date();
-      let h = now.getHours(), m = now.getMinutes();
-      statusTime.textContent = `${h}:${m.toString().padStart(2,'0')}`;
+      statusTime.textContent = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
     }
     updateClock();
     setInterval(updateClock, 10000);
 
-    // Theme toggle
+    // ─── Theme ────────────────────────────────────────────────────────────────
     themeBtn.addEventListener('click', () => {
       document.body.classList.toggle('light');
       themeBtn.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
     });
 
-    // URL input
+    // ─── Render device buttons ────────────────────────────────────────────────
+    function renderDevices(query = '') {
+      const q = query.toLowerCase();
+      const filtered = DEVICES.filter(d =>
+        (currentCat === 'all' || d.cat === currentCat) &&
+        (!q || d.name.toLowerCase().includes(q))
+      );
+      deviceList.innerHTML = '';
+      if (!filtered.length) {
+        deviceList.innerHTML = '<span style="font-size:12px;color:var(--text3);padding:4px 8px">No devices found</span>';
+        return;
+      }
+      filtered.forEach((d, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'device-btn' + (d.name === currentName ? ' active' : '');
+        btn.dataset.w    = d.w;
+        btn.dataset.h    = d.h;
+        btn.dataset.name = d.name;
+        btn.title        = `${d.w} × ${d.h}`;
+        btn.textContent  = `${d.icon} ${d.name}`;
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentW    = d.w;
+          currentH    = d.h;
+          currentName = d.name;
+          customW.value = '';
+          customH.value = '';
+          applyDevice();
+        });
+        deviceList.appendChild(btn);
+      });
+    }
+    renderDevices();
+
+    // Category tabs
+    document.querySelectorAll('.cat-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentCat = tab.dataset.cat;
+        renderDevices(deviceSearch.value);
+      });
+    });
+
+    // Search
+    deviceSearch.addEventListener('input', () => renderDevices(deviceSearch.value));
+
+    // ─── URL input ───────────────────────────────────────────────────────────
     urlInput.addEventListener('input', () => {
       urlClear.classList.toggle('visible', urlInput.value.length > 0);
     });
@@ -876,9 +1054,7 @@
       urlClear.classList.remove('visible');
       urlInput.focus();
     });
-    urlInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter') loadPreview();
-    });
+    urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') loadPreview(); });
 
     // Sample links
     document.querySelectorAll('.sample-link').forEach(el => {
@@ -888,23 +1064,9 @@
         loadPreview();
       });
     });
-
-    // Go button
     goBtn.addEventListener('click', loadPreview);
 
-    // Device buttons
-    document.querySelectorAll('.device-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentW = parseInt(btn.dataset.w);
-        currentH = parseInt(btn.dataset.h);
-        currentName = btn.dataset.name;
-        applyDevice();
-      });
-    });
-
-    // Orientation
+    // ─── Orientation ─────────────────────────────────────────────────────────
     document.getElementById('portraitBtn').addEventListener('click', () => {
       isLandscape = false;
       document.getElementById('portraitBtn').classList.add('active');
@@ -918,39 +1080,44 @@
       applyDevice();
     });
 
-    // Zoom
+    // ─── Custom size ─────────────────────────────────────────────────────────
+    customApply.addEventListener('click', () => {
+      const w = parseInt(customW.value);
+      const h = parseInt(customH.value);
+      if (w >= 200 && h >= 300) {
+        currentW    = w;
+        currentH    = h;
+        currentName = `Custom ${w}×${h}`;
+        document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+        applyDevice();
+      }
+    });
+    [customW, customH].forEach(inp => {
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') customApply.click(); });
+    });
+
+    // ─── Zoom ─────────────────────────────────────────────────────────────────
     zoomSlider.addEventListener('input', () => {
       zoom = parseInt(zoomSlider.value);
       zoomLabel.textContent = zoom + '%';
       applyDevice();
     });
 
+    // ─── Apply device ─────────────────────────────────────────────────────────
     function applyDevice() {
-      let w = isLandscape ? currentH : currentW;
-      let h = isLandscape ? currentW : currentH;
+      const w = isLandscape ? currentH : currentW;
+      const h = isLandscape ? currentW : currentH;
       const scale = zoom / 100;
-
-      // Extra padding for phone shell (notch, status bar, home bar, border)
-      const extraV = 100; // status bar + home bar + padding
-      const extraH = 24;  // side padding
-
-      phoneShell.style.width  = (w + extraH) + 'px';
-      phoneShell.style.height = (h + extraV) + 'px';
+      const extraV = 100, extraH = 24;
+      phoneShell.style.width     = (w + extraH) + 'px';
+      phoneShell.style.height    = (h + extraV) + 'px';
       phoneShell.style.transform = `scale(${scale})`;
       phoneShell.style.transformOrigin = 'top center';
-
-      // Adjust wrapper height so layout doesn't collapse
-      const scaledH = (h + extraV) * scale;
-      phoneWrap.style.paddingTop = '0';
-
-      dimInfo.textContent = `${w} × ${h}`;
-      scaleNote.textContent = `${currentName} — scaled to ${zoom}%`;
-
-      // set iframe size via CSS transform trick: the iframe itself is full shell width/height
-      // but we tell the site it's w×h via the container
+      dimInfo.textContent   = `${w} × ${h}`;
+      scaleNote.textContent = `${currentName} — ${zoom}%`;
     }
 
-    // Reload
+    // ─── Reload ───────────────────────────────────────────────────────────────
     reloadBtn.addEventListener('click', () => {
       if (currentUrl) {
         setLoading();
@@ -959,29 +1126,59 @@
       }
     });
 
-    // Copy
+    // ─── Copy URL ─────────────────────────────────────────────────────────────
     copyBtn.addEventListener('click', () => {
-      if (currentUrl) {
-        navigator.clipboard.writeText(currentUrl).then(() => {
-          copyBtn.classList.add('copied');
-          copyBtn.textContent = '✓ Copied!';
-          setTimeout(() => {
-            copyBtn.classList.remove('copied');
-            copyBtn.textContent = '⎘ Copy URL';
-          }, 1800);
+      if (!currentUrl) return;
+      navigator.clipboard.writeText(currentUrl).then(() => {
+        copyBtn.classList.add('copied');
+        copyBtn.textContent = '✓ Copied!';
+        setTimeout(() => { copyBtn.classList.remove('copied'); copyBtn.textContent = '⎘ Copy URL'; }, 1800);
+      });
+    });
+
+    // ─── Share ────────────────────────────────────────────────────────────────
+    shareBtn.addEventListener('click', () => {
+      if (!currentUrl) return;
+      const shareUrl = `${location.origin}/?url=${encodeURIComponent(currentUrl)}&device=${encodeURIComponent(currentName)}&w=${currentW}&h=${currentH}`;
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        shareBtn.classList.add('copied');
+        shareBtn.textContent = '✓ Link copied!';
+        setTimeout(() => { shareBtn.classList.remove('copied'); shareBtn.textContent = '📤 Share'; }, 2000);
+      });
+    });
+
+    // ─── Screenshot ───────────────────────────────────────────────────────────
+    screenshotBtn.addEventListener('click', async () => {
+      if (!window.html2canvas) { alert('Screenshot library not loaded.'); return; }
+      const origText = screenshotBtn.textContent;
+      screenshotBtn.textContent = '⏳ Capturing…';
+      screenshotBtn.disabled = true;
+      try {
+        const canvas = await html2canvas(phoneShell, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          foreignObjectRendering: true,
+          backgroundColor: null,
+          logging: false,
         });
+        const link = document.createElement('a');
+        const slug = currentName.replace(/\s+/g,'-').replace(/[^a-zA-Z0-9-]/g,'');
+        link.download = `viewonphone-${slug}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch(e) {
+        alert('Screenshot failed. Try using your browser\'s built-in screenshot (Ctrl+Shift+S).');
       }
+      screenshotBtn.textContent = origText;
+      screenshotBtn.disabled = false;
     });
 
-    // Open tab
-    openBtn.addEventListener('click', () => {
-      if (currentUrl) window.open(currentUrl, '_blank');
-    });
-    blockedOpenBtn.addEventListener('click', () => {
-      if (currentUrl) window.open(currentUrl, '_blank');
-    });
+    // ─── Open tab ─────────────────────────────────────────────────────────────
+    openBtn.addEventListener('click', () => { if (currentUrl) window.open(currentUrl, '_blank'); });
+    blockedOpenBtn.addEventListener('click', () => { if (currentUrl) window.open(currentUrl, '_blank'); });
 
-    // Normalise URL
+    // ─── Helpers ──────────────────────────────────────────────────────────────
     function normaliseUrl(raw) {
       raw = raw.trim();
       if (!raw) return null;
@@ -990,11 +1187,7 @@
       if (!/^https?:\/\//i.test(raw)) return 'https://' + raw;
       return raw;
     }
-
-    function proxyUrl(url) {
-      return '/proxy?url=' + encodeURIComponent(url);
-    }
-
+    function proxyUrl(url) { return '/proxy?url=' + encodeURIComponent(url); }
     function setLoading() {
       loadingBar.classList.add('active');
       statusBadge.innerHTML = '<span class="badge-dot"></span>Loading…';
@@ -1002,55 +1195,34 @@
       statusBadge.style.cssText = 'background:rgba(100,100,100,.15);color:var(--text3);border:1px solid var(--border)';
     }
 
+    // ─── Load preview ─────────────────────────────────────────────────────────
     function loadPreview() {
       const url = normaliseUrl(urlInput.value);
       if (!url) return;
-
       currentUrl = url;
       urlInput.value = url;
-
-      // Show phone, hide empty
-      emptyState.style.display = 'none';
+      emptyState.style.display  = 'none';
       featureCards.style.display = 'none';
       phoneWrap.classList.add('visible');
       iframe.classList.remove('hidden');
       blockedMsg.classList.remove('show');
-
       setLoading();
       applyDevice();
-
-      // Clear previous handlers
-      iframe.onload  = null;
-      iframe.onerror = null;
-
-      // Loading timeout — proxy can take a few seconds
-      const loadTimer = setTimeout(() => {
-        loadingBar.classList.remove('active');
-        showLive(); // assume live after timeout
-      }, 20000);
-
+      iframe.onload = iframe.onerror = null;
+      const t = setTimeout(() => { loadingBar.classList.remove('active'); showLive(); }, 20000);
       iframe.onload = () => {
-        clearTimeout(loadTimer);
+        clearTimeout(t);
         loadingBar.classList.remove('active');
-        // Since proxy is same-origin, we can inspect content
         try {
           const doc = iframe.contentDocument;
-          if (!doc || !doc.body || doc.body.innerHTML.trim() === '') {
-            showError('Page returned empty content.');
-          } else {
-            showLive();
-          }
-        } catch(e) {
-          showLive();
-        }
+          (!doc || !doc.body || !doc.body.innerHTML.trim()) ? showError('Page returned empty content.') : showLive();
+        } catch(e) { showLive(); }
       };
-
       iframe.onerror = () => {
-        clearTimeout(loadTimer);
+        clearTimeout(t);
         loadingBar.classList.remove('active');
         showError('Cannot connect to proxy server.<br/>Run: <code>node proxy-server.js</code>');
       };
-
       iframe.src = proxyUrl(url);
     }
 
@@ -1061,7 +1233,6 @@
       statusBadge.className = 'status-badge badge-green';
       statusBadge.style.cssText = '';
     }
-
     function showError(msg) {
       iframe.classList.add('hidden');
       document.getElementById('blockedTitle').textContent = 'Could not load page';
@@ -1072,12 +1243,21 @@
       statusBadge.style.cssText = '';
     }
 
-    // Init
+    // ─── Init ─────────────────────────────────────────────────────────────────
     applyDevice();
 
-    // Handle URL param ?url=...
+    // Handle URL params ?url=...&device=...&w=...&h=...
     const params = new URLSearchParams(location.search);
     if (params.get('url')) {
+      const pDevice = params.get('device');
+      const pW = parseInt(params.get('w'));
+      const pH = parseInt(params.get('h'));
+      if (pDevice && pW && pH) {
+        currentW    = pW;
+        currentH    = pH;
+        currentName = decodeURIComponent(pDevice);
+        renderDevices();
+      }
       urlInput.value = params.get('url');
       urlClear.classList.add('visible');
       loadPreview();
