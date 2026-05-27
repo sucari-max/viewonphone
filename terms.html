@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service — ViewOnPhone</title>
+  <meta name="description" content="Terms of Service for ViewOnPhone.com — the rules and guidelines for using our mobile preview tool." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.viewonphone.com/terms" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="alternate icon" href="/favicon.ico" />
+  <meta name="theme-color" content="#6c63ff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f1117;
+      --bg2: #1a1d27;
+      --bg3: #22263a;
+      --border: #2e3354;
+      --accent: #6c63ff;
+      --accent2: #8b83ff;
+      --text: #e8eaf6;
+      --text2: #9096b8;
+      --text3: #555f85;
+      --radius: 12px;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .logo span { color: var(--accent2); }
+    main {
+      flex: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+      width: 100%;
+    }
+    .page-label {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(108,99,255,.15);
+      border: 1px solid rgba(108,99,255,.3);
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--accent2);
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .updated {
+      font-size: 13px;
+      color: var(--text3);
+      margin-bottom: 40px;
+    }
+    .toc {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 40px;
+    }
+    .toc-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--text3);
+      margin-bottom: 12px;
+    }
+    .toc ol {
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .toc a {
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color .15s;
+    }
+    .toc a:hover { color: var(--accent2); }
+    section {
+      margin-bottom: 40px;
+    }
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text2);
+      margin-bottom: 12px;
+    }
+    p:last-child { margin-bottom: 0; }
+    ul {
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    li {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text2);
+    }
+    li strong { color: var(--text); font-weight: 600; }
+    .warning-box {
+      background: rgba(245,101,101,.08);
+      border: 1px solid rgba(245,101,101,.2);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+    }
+    .warning-box p { margin: 0; color: var(--text); }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      font-size: 12px;
+      color: var(--text3);
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    footer a {
+      color: var(--text3);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    footer a:hover { color: var(--accent2); }
+    .footer-links { display: flex; gap: 20px; }
+    @media (max-width: 600px) {
+      h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="/">
+      <div class="logo-icon">📱</div>
+      View<span>OnPhone</span>
+    </a>
+  </header>
+
+  <main>
+    <div class="page-label">Legal</div>
+    <h1>Terms of Service</h1>
+    <p class="updated">Last updated: May 27, 2026</p>
+
+    <p>Please read these Terms of Service carefully before using ViewOnPhone. By accessing or using the service, you agree to be bound by these terms. If you do not agree, please do not use the service.</p>
+
+    <div class="toc">
+      <div class="toc-title">Table of Contents</div>
+      <ol>
+        <li><a href="#service">Service Description</a></li>
+        <li><a href="#acceptable-use">Acceptable Use</a></li>
+        <li><a href="#prohibited">Prohibited Activities</a></li>
+        <li><a href="#intellectual-property">Intellectual Property</a></li>
+        <li><a href="#disclaimer">Disclaimer of Warranties</a></li>
+        <li><a href="#liability">Limitation of Liability</a></li>
+        <li><a href="#modifications">Service Modifications</a></li>
+        <li><a href="#third-party">Third-Party Websites</a></li>
+        <li><a href="#governing-law">Governing Law</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ol>
+    </div>
+
+    <section id="service">
+      <h2>1. Service Description</h2>
+      <p>ViewOnPhone (<a href="https://www.viewonphone.com">www.viewonphone.com</a>) is a free, web-based tool that allows users to preview how any website appears on various mobile devices including smartphones and tablets. The service simulates device viewports and, where possible, proxies web content to render it inside a realistic device frame.</p>
+      <p>ViewOnPhone is provided free of charge. No account or registration is required to use the core features.</p>
+    </section>
+
+    <section id="acceptable-use">
+      <h2>2. Acceptable Use</h2>
+      <p>You may use ViewOnPhone to:</p>
+      <ul>
+        <li>Preview and test websites you own or have explicit permission to test</li>
+        <li>Evaluate responsive design layouts for development or quality assurance purposes</li>
+        <li>Share preview links with collaborators, clients, or team members</li>
+        <li>Take screenshots of previewed pages for personal or professional use</li>
+      </ul>
+      <p>By using this service, you confirm that you have appropriate rights or authorization to preview any URL you submit.</p>
+    </section>
+
+    <section id="prohibited">
+      <h2>3. Prohibited Activities</h2>
+      <div class="warning-box">
+        <p>Using ViewOnPhone to preview websites without the owner's authorization is strictly prohibited.</p>
+      </div>
+      <p>You agree not to use ViewOnPhone to:</p>
+      <ul>
+        <li><strong>Unauthorized access:</strong> Preview, probe, or analyze websites you do not own and do not have explicit permission to access in this manner.</li>
+        <li><strong>Illegal content:</strong> Preview or distribute URLs that link to illegal, harmful, or abusive content.</li>
+        <li><strong>Circumvention:</strong> Attempt to bypass, reverse-engineer, or exploit the proxy or any other component of the service.</li>
+        <li><strong>Overloading:</strong> Send automated, bulk, or abusive requests that degrade service performance for other users.</li>
+        <li><strong>Malware distribution:</strong> Use the service to deliver or facilitate the spread of malicious software.</li>
+        <li><strong>Impersonation:</strong> Misrepresent the source of previewed content or impersonate another organization.</li>
+      </ul>
+      <p>We reserve the right to block access to any URL or user that violates these terms.</p>
+    </section>
+
+    <section id="intellectual-property">
+      <h2>4. Intellectual Property</h2>
+      <p>The ViewOnPhone interface, design, logo, and underlying code are the intellectual property of ViewOnPhone and its operators. All rights are reserved.</p>
+      <p>Content rendered inside the preview frame belongs to the respective website owners. ViewOnPhone claims no ownership over previewed third-party content.</p>
+      <p>You may not copy, reproduce, or distribute the ViewOnPhone interface or codebase without prior written permission.</p>
+    </section>
+
+    <section id="disclaimer">
+      <h2>5. Disclaimer of Warranties</h2>
+      <p>ViewOnPhone is provided <strong>"as is"</strong> and <strong>"as available"</strong> without warranties of any kind, either express or implied, including but not limited to:</p>
+      <ul>
+        <li>Fitness for a particular purpose</li>
+        <li>Uninterrupted or error-free operation</li>
+        <li>Accuracy of viewport simulation compared to real physical devices</li>
+        <li>Successful loading of any specific third-party URL</li>
+      </ul>
+      <p>Many websites block embedding via X-Frame-Options or Content Security Policy headers, which may prevent them from loading inside the preview frame. This is a limitation of the web platform, not a defect of ViewOnPhone.</p>
+    </section>
+
+    <section id="liability">
+      <h2>6. Limitation of Liability</h2>
+      <p>To the maximum extent permitted by applicable law, ViewOnPhone and its operators shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of — or inability to use — the service, including but not limited to:</p>
+      <ul>
+        <li>Loss of data or business opportunities</li>
+        <li>Inaccurate device simulation results</li>
+        <li>Third-party content displayed in the preview frame</li>
+        <li>Service interruptions or downtime</li>
+      </ul>
+      <p>Your sole remedy for dissatisfaction with the service is to stop using it.</p>
+    </section>
+
+    <section id="modifications">
+      <h2>7. Service Modifications</h2>
+      <p>ViewOnPhone reserves the right to modify, suspend, or discontinue the service — or any part of it — at any time and without prior notice. We are not liable to you or any third party for any such modification, suspension, or discontinuation.</p>
+      <p>We may also update these Terms of Service at any time. Continued use of the service after changes are posted constitutes your acceptance of the revised terms.</p>
+    </section>
+
+    <section id="third-party">
+      <h2>8. Third-Party Websites</h2>
+      <p>ViewOnPhone renders third-party websites inside the preview frame. We have no control over the content, privacy practices, or terms of those websites. Accessing a third-party URL through ViewOnPhone does not constitute an endorsement of that website.</p>
+      <p>You are responsible for complying with the terms of any website you choose to preview.</p>
+    </section>
+
+    <section id="governing-law">
+      <h2>9. Governing Law</h2>
+      <p>These Terms of Service shall be governed by and construed in accordance with applicable laws. Any disputes arising from these terms or your use of ViewOnPhone shall be subject to the exclusive jurisdiction of the competent courts.</p>
+    </section>
+
+    <section id="contact">
+      <h2>10. Contact</h2>
+      <p>For questions about these Terms of Service, please contact:</p>
+      <ul>
+        <li>Email: <a href="mailto:legal@viewonphone.com">legal@viewonphone.com</a></li>
+        <li>Website: <a href="https://www.viewonphone.com">www.viewonphone.com</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <span>© <a href="https://chuong.vn" target="_blank">Chuong.vn</a> | Business No-code</span>
+    <div class="footer-links">
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms of Service</a>
+    </div>
+  </footer>
+
+</body>
+</html>

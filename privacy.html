@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — ViewOnPhone</title>
+  <meta name="description" content="Privacy Policy for ViewOnPhone.com — learn how we collect, use, and protect your information." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.viewonphone.com/privacy" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="alternate icon" href="/favicon.ico" />
+  <meta name="theme-color" content="#6c63ff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f1117;
+      --bg2: #1a1d27;
+      --bg3: #22263a;
+      --border: #2e3354;
+      --accent: #6c63ff;
+      --accent2: #8b83ff;
+      --text: #e8eaf6;
+      --text2: #9096b8;
+      --text3: #555f85;
+      --radius: 12px;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .logo span { color: var(--accent2); }
+    main {
+      flex: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+      width: 100%;
+    }
+    .page-label {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(108,99,255,.15);
+      border: 1px solid rgba(108,99,255,.3);
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--accent2);
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .updated {
+      font-size: 13px;
+      color: var(--text3);
+      margin-bottom: 40px;
+    }
+    .toc {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 40px;
+    }
+    .toc-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--text3);
+      margin-bottom: 12px;
+    }
+    .toc ol {
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .toc a {
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color .15s;
+    }
+    .toc a:hover { color: var(--accent2); }
+    section {
+      margin-bottom: 40px;
+    }
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text2);
+      margin-bottom: 12px;
+    }
+    p:last-child { margin-bottom: 0; }
+    ul {
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    li {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text2);
+    }
+    li strong { color: var(--text); font-weight: 600; }
+    .highlight-box {
+      background: rgba(108,99,255,.08);
+      border: 1px solid rgba(108,99,255,.2);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+    }
+    .highlight-box p {
+      margin: 0;
+      color: var(--text);
+    }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      font-size: 12px;
+      color: var(--text3);
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    footer a {
+      color: var(--text3);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    footer a:hover { color: var(--accent2); }
+    .footer-links { display: flex; gap: 20px; }
+    @media (max-width: 600px) {
+      h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="/">
+      <div class="logo-icon">📱</div>
+      View<span>OnPhone</span>
+    </a>
+  </header>
+
+  <main>
+    <div class="page-label">Legal</div>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: May 27, 2026</p>
+
+    <div class="highlight-box">
+      <p>We do not store the URLs you preview. All URL processing is temporary and used solely to render the mobile preview on your screen.</p>
+    </div>
+
+    <div class="toc">
+      <div class="toc-title">Table of Contents</div>
+      <ol>
+        <li><a href="#info-collect">Information We Collect</a></li>
+        <li><a href="#how-we-use">How We Use Your Information</a></li>
+        <li><a href="#sharing">Sharing &amp; Disclosure</a></li>
+        <li><a href="#protection">Data Protection &amp; Retention</a></li>
+        <li><a href="#your-rights">Your Rights</a></li>
+        <li><a href="#cookies">Cookies &amp; Tracking</a></li>
+        <li><a href="#children">Children's Privacy</a></li>
+        <li><a href="#changes">Changes to This Policy</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+      </ol>
+    </div>
+
+    <section id="info-collect">
+      <h2>1. Information We Collect</h2>
+      <p>ViewOnPhone is a free, browser-based tool. We collect minimal data to operate the service:</p>
+      <ul>
+        <li><strong>Usage data:</strong> Anonymous metrics such as pages visited, device presets selected, and general interaction patterns. No personally identifiable information is tied to this data.</li>
+        <li><strong>URLs you preview:</strong> URLs entered into the preview tool are processed transiently to load the page inside the mobile frame. We do not log or store these URLs.</li>
+        <li><strong>Technical data:</strong> Standard server logs including IP address (anonymized after 24 hours), browser type, and referring URL, retained for up to 90 days for security and abuse prevention.</li>
+      </ul>
+      <p>We do not require account registration and do not collect names, email addresses, or payment information through this service.</p>
+    </section>
+
+    <section id="how-we-use">
+      <h2>2. How We Use Your Information</h2>
+      <p>The limited information we collect is used to:</p>
+      <ul>
+        <li>Operate and maintain the ViewOnPhone preview service</li>
+        <li>Monitor service performance and diagnose technical issues</li>
+        <li>Detect and prevent abuse, spam, or malicious activity</li>
+        <li>Understand aggregate usage trends to improve the product</li>
+      </ul>
+      <p>We do not use your data for advertising profiling, behavioral tracking, or any purpose beyond operating this service.</p>
+    </section>
+
+    <section id="sharing">
+      <h2>3. Sharing &amp; Disclosure</h2>
+      <p>We do not sell, trade, or rent your personal information to third parties.</p>
+      <p>We may share data only in the following limited circumstances:</p>
+      <ul>
+        <li><strong>Service providers:</strong> Trusted infrastructure providers (hosting, CDN, analytics) who process data solely on our behalf under strict confidentiality agreements.</li>
+        <li><strong>Legal compliance:</strong> When required by applicable law, court order, or government authority.</li>
+        <li><strong>Safety:</strong> To protect the rights, safety, or property of ViewOnPhone, our users, or the public.</li>
+      </ul>
+    </section>
+
+    <section id="protection">
+      <h2>4. Data Protection &amp; Retention</h2>
+      <p>We employ industry-standard technical safeguards including HTTPS encryption for all data in transit.</p>
+      <ul>
+        <li><strong>Previewed URLs:</strong> Never stored — discarded immediately after the proxy request completes.</li>
+        <li><strong>Server logs:</strong> Retained for up to 90 days, then automatically deleted.</li>
+        <li><strong>Analytics data:</strong> Aggregated and anonymized; no individual retention limit applies.</li>
+      </ul>
+    </section>
+
+    <section id="your-rights">
+      <h2>5. Your Rights</h2>
+      <p>Because we do not maintain user accounts or store personally identifiable information, most data subject requests do not apply in the traditional sense. However, depending on your jurisdiction you may have rights to:</p>
+      <ul>
+        <li>Request disclosure of what data (if any) we hold related to your IP address within our 90-day log window</li>
+        <li>Request deletion of server log entries associated with your IP address</li>
+        <li>Opt out of analytics cookies via your browser settings</li>
+      </ul>
+      <p>To exercise any of these rights, contact us at <a href="mailto:privacy@viewonphone.com">privacy@viewonphone.com</a>.</p>
+    </section>
+
+    <section id="cookies">
+      <h2>6. Cookies &amp; Tracking</h2>
+      <p>ViewOnPhone uses a minimal set of cookies:</p>
+      <ul>
+        <li><strong>Functional cookies:</strong> To remember your theme preference (light/dark mode). These do not track you across sites.</li>
+        <li><strong>Analytics cookies:</strong> Anonymous, aggregated usage statistics via a privacy-respecting analytics provider. No cross-site tracking.</li>
+      </ul>
+      <p>You can disable or clear cookies at any time through your browser settings. Disabling cookies will not affect the core functionality of the tool.</p>
+    </section>
+
+    <section id="children">
+      <h2>7. Children's Privacy</h2>
+      <p>ViewOnPhone is not directed at children under the age of 13. We do not knowingly collect any information from children. If you believe a child has provided information to us, please contact us and we will promptly delete it.</p>
+    </section>
+
+    <section id="changes">
+      <h2>8. Changes to This Policy</h2>
+      <p>We may update this Privacy Policy from time to time. When we do, we will update the "Last updated" date at the top of this page. Continued use of ViewOnPhone after any changes constitutes your acceptance of the revised policy.</p>
+      <p>We encourage you to review this page periodically for the latest information.</p>
+    </section>
+
+    <section id="contact">
+      <h2>9. Contact Us</h2>
+      <p>If you have any questions or concerns about this Privacy Policy, please reach out:</p>
+      <ul>
+        <li>Email: <a href="mailto:privacy@viewonphone.com">privacy@viewonphone.com</a></li>
+        <li>Website: <a href="https://www.viewonphone.com">www.viewonphone.com</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <span>© <a href="https://chuong.vn" target="_blank">Chuong.vn</a> | Business No-code</span>
+    <div class="footer-links">
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms of Service</a>
+    </div>
+  </footer>
+
+</body>
+</html>
