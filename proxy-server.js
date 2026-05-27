@@ -132,32 +132,74 @@ function rewriteHtml(html, finalUrl) {
   // 4. Rewrite CSS url('/...') absolute paths
   html = html.replace(/(url\(["']?)\/(?!\/)/gi, `$1${origin}/`);
 
-  // 5. Inject navigation interceptor — all link clicks & GET forms go through proxy
+  // 5. Inject comprehensive navigation interceptor
   const navScript = `\n<script data-vop="nav">
 (function(){
   var _base=${JSON.stringify(finalUrl)};
-  var _proxy='/proxy?url=';
-  function nav(u){
+  var _pp='/proxy?url=';
+  // ── Save originals BEFORE any override ──
+  var _oReplace=Location.prototype.replace;
+  var _oAssign=Location.prototype.assign;
+  var _hDesc=Object.getOwnPropertyDescriptor(Location.prototype,'href');
+
+  function skip(u){
+    if(!u||typeof u!=='string')return true;
+    var t=u.trim();
+    return /^(#|javascript:|mailto:|tel:|data:|blob:)/i.test(t);
+  }
+  function isAlreadyProxy(u){ return typeof u==='string'&&u.indexOf(_pp)===0; }
+
+  function go(u){
+    if(skip(u)||isAlreadyProxy(u))return;
     try{
       var abs=new URL(u,_base).href;
-      if(abs.startsWith('http'))window.location.href=_proxy+encodeURIComponent(abs);
+      if(!abs.startsWith('http'))return;
+      _oReplace.call(location,_pp+encodeURIComponent(abs));
     }catch(e){}
   }
+
+  // 1. <a href> clicks — capture phase runs before page handlers
   document.addEventListener('click',function(e){
     var a=e.target.closest('a[href]');
     if(!a)return;
     var h=a.getAttribute('href')||'';
-    if(!h||/^(#|javascript:|mailto:|tel:|data:|blob:)/i.test(h.trim()))return;
-    e.preventDefault();e.stopPropagation();nav(h);
+    if(skip(h))return;
+    e.preventDefault();e.stopPropagation();go(h);
   },true);
+
+  // 2. GET form submissions
   document.addEventListener('submit',function(e){
     var f=e.target;
-    if(f.method&&f.method.toLowerCase()==='post')return;
-    e.preventDefault();
+    if((f.getAttribute('method')||'get').toLowerCase()==='post')return;
+    e.preventDefault();e.stopPropagation();
     var q=new URLSearchParams(new FormData(f)).toString();
     var a=f.getAttribute('action')||_base;
-    nav(a+(q?(a.includes('?')?'&':'?')+q:''));
+    go(a+(q?(a.indexOf('?')>=0?'&':'?')+q:''));
   },true);
+
+  // 3. window.location.href = '...'
+  try{
+    Object.defineProperty(Location.prototype,'href',{
+      get:_hDesc.get,
+      set:function(u){ isAlreadyProxy(u)?_hDesc.set.call(this,u):go(u); },
+      configurable:true,enumerable:_hDesc.enumerable
+    });
+  }catch(e){}
+
+  // 4. location.assign() and location.replace()
+  try{
+    Location.prototype.assign=function(u){ isAlreadyProxy(u)?_oAssign.call(this,u):go(u); };
+    Location.prototype.replace=function(u){ isAlreadyProxy(u)?_oReplace.call(this,u):go(u); };
+  }catch(e){}
+
+  // 5. window.open() — open in same iframe via proxy
+  try{
+    var _oOpen=window.open;
+    window.open=function(u,t,f){
+      if(u&&!skip(u)){go(u);return null;}
+      return _oOpen?_oOpen.call(window,u,t,f):null;
+    };
+  }catch(e){}
 })();
 <\/script>`;
 
