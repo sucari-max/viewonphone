@@ -132,6 +132,41 @@ function rewriteHtml(html, finalUrl) {
   // 4. Rewrite CSS url('/...') absolute paths
   html = html.replace(/(url\(["']?)\/(?!\/)/gi, `$1${origin}/`);
 
+  // 5. Inject navigation interceptor — all link clicks & GET forms go through proxy
+  const navScript = `\n<script data-vop="nav">
+(function(){
+  var _base=${JSON.stringify(finalUrl)};
+  var _proxy='/proxy?url=';
+  function nav(u){
+    try{
+      var abs=new URL(u,_base).href;
+      if(abs.startsWith('http'))window.location.href=_proxy+encodeURIComponent(abs);
+    }catch(e){}
+  }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a[href]');
+    if(!a)return;
+    var h=a.getAttribute('href')||'';
+    if(!h||/^(#|javascript:|mailto:|tel:|data:|blob:)/i.test(h.trim()))return;
+    e.preventDefault();e.stopPropagation();nav(h);
+  },true);
+  document.addEventListener('submit',function(e){
+    var f=e.target;
+    if(f.method&&f.method.toLowerCase()==='post')return;
+    e.preventDefault();
+    var q=new URLSearchParams(new FormData(f)).toString();
+    var a=f.getAttribute('action')||_base;
+    nav(a+(q?(a.includes('?')?'&':'?')+q:''));
+  },true);
+})();
+<\/script>`;
+
+  if (/<\/head>/i.test(html)) {
+    html = html.replace(/<\/head>/i, navScript + '\n</head>');
+  } else {
+    html = navScript + html;
+  }
+
   return html;
 }
 
