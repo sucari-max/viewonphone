@@ -648,46 +648,72 @@
     .badge-red { background: rgba(245,101,101,.15); color: var(--red); border: 1px solid rgba(245,101,101,.3); }
     .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
-    /* ─── CATEGORY TABS ─── */
-    .cat-row {
+    /* ─── BRAND ROW ─── */
+    .brand-row {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       max-width: 900px;
       margin: 0 auto 6px;
-      overflow-x: auto;
-      scrollbar-width: none;
+      flex-wrap: wrap;
     }
-    .cat-row::-webkit-scrollbar { display: none; }
-    .cat-tab {
-      padding: 4px 12px;
-      border-radius: 6px;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--text3);
-      font-size: 12px;
-      font-weight: 500;
+    .brand-wrap { position: relative; }
+    .brand-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      color: var(--text2);
+      font-size: 13px;
+      font-weight: 600;
       cursor: pointer;
       transition: all .15s;
       white-space: nowrap;
     }
-    .cat-tab:hover { color: var(--text2); }
-    .cat-tab.active { background: var(--bg3); border-color: var(--border); color: var(--text); }
-    .device-search {
-      margin-left: auto;
-      height: 26px;
-      padding: 0 10px;
-      background: var(--bg3);
+    .brand-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .brand-btn.has-active { border-color: var(--accent); color: var(--accent); background: rgba(108,99,255,.12); }
+    .brand-chevron { font-size: 9px; transition: transform .15s; opacity: .6; }
+    .brand-btn.open .brand-chevron { transform: rotate(180deg); }
+    .brand-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      min-width: 230px;
+      background: var(--bg2);
       border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      font-size: 12px;
-      outline: none;
-      width: 140px;
-      flex-shrink: 0;
+      border-radius: 12px;
+      padding: 6px;
+      z-index: 500;
+      box-shadow: 0 10px 36px rgba(0,0,0,0.5);
+      max-height: 360px;
+      overflow-y: auto;
     }
-    .device-search:focus { border-color: var(--accent); }
-    .device-search::placeholder { color: var(--text3); }
+    .brand-dropdown.open { display: block; }
+    .brand-device-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 7px 10px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--text2);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .12s;
+      text-align: left;
+      white-space: nowrap;
+      gap: 12px;
+    }
+    .brand-device-item:hover { background: var(--bg3); color: var(--text); }
+    .brand-device-item.active { background: var(--accent); color: #fff; }
+    .device-dim { font-size: 10px; opacity: .5; font-family: 'JetBrains Mono', monospace; flex-shrink: 0; }
 
     /* ─── CONTROLS ROW ─── */
     .controls-row {
@@ -779,16 +805,8 @@
       </div>
       <button class="btn-go" id="goBtn">▶ Preview</button>
     </div>
-    <!-- Category filter + search -->
-    <div class="cat-row">
-      <button class="cat-tab active" data-cat="all">All</button>
-      <button class="cat-tab" data-cat="phone">📱 Phones</button>
-      <button class="cat-tab" data-cat="tablet">📟 Tablets</button>
-      <button class="cat-tab" data-cat="desktop">🖥️ Desktop</button>
-      <input type="text" class="device-search" id="deviceSearch" placeholder="🔍 Search device…" autocomplete="off" />
-    </div>
-    <!-- Device list (populated by JS) -->
-    <div class="device-row" id="deviceList"></div>
+    <!-- Brand dropdown row -->
+    <div class="brand-row" id="brandRow"></div>
     <!-- Orientation + Custom size + Zoom -->
     <div class="controls-row">
       <button class="orient-btn active" id="portraitBtn" title="Portrait">⬆ Portrait</button>
@@ -916,32 +934,110 @@
   </main>
 
   <script>
-    // ─── DEVICE LIST ──────────────────────────────────────────────────────────
-    const DEVICES = [
-      // Phones — Apple
-      { name:'iPhone 16 Pro',    w:393,  h:852,  cat:'phone',   icon:'🍎' },
-      { name:'iPhone 16',        w:390,  h:844,  cat:'phone',   icon:'🍎' },
-      { name:'iPhone 15 Pro Max',w:430,  h:932,  cat:'phone',   icon:'🍎' },
-      { name:'iPhone 14',        w:390,  h:844,  cat:'phone',   icon:'🍎' },
-      { name:'iPhone SE',        w:375,  h:667,  cat:'phone',   icon:'🍎' },
-      // Phones — Samsung
-      { name:'Galaxy S24 Ultra', w:412,  h:915,  cat:'phone',   icon:'🤖' },
-      { name:'Galaxy S24',       w:384,  h:832,  cat:'phone',   icon:'🤖' },
-      { name:'Galaxy S23',       w:360,  h:780,  cat:'phone',   icon:'🤖' },
-      { name:'Galaxy Z Fold 6',  w:968,  h:848,  cat:'phone',   icon:'🤖' },
-      // Phones — Google / OnePlus
-      { name:'Pixel 9 Pro',      w:412,  h:915,  cat:'phone',   icon:'🤖' },
-      { name:'Pixel 7',          w:412,  h:892,  cat:'phone',   icon:'🤖' },
-      { name:'OnePlus 12',       w:412,  h:919,  cat:'phone',   icon:'🤖' },
-      // Tablets
-      { name:'iPad Pro 12.9"',   w:1024, h:1366, cat:'tablet',  icon:'📟' },
-      { name:'iPad Air',         w:820,  h:1180, cat:'tablet',  icon:'📟' },
-      { name:'iPad Mini',        w:768,  h:1024, cat:'tablet',  icon:'📟' },
-      { name:'Galaxy Tab S9',    w:800,  h:1280, cat:'tablet',  icon:'📟' },
-      // Desktop
-      { name:'Laptop 13"',       w:1280, h:800,  cat:'desktop', icon:'🖥️' },
-      { name:'HD 1080p',         w:1920, h:1080, cat:'desktop', icon:'🖥️' },
-      { name:'2K / QHD',         w:2560, h:1440, cat:'desktop', icon:'🖥️' },
+    // ─── BRAND / DEVICE LIST ─────────────────────────────────────────────────
+    const BRANDS = [
+      { id:'apple',   name:'Apple',   icon:'🍎', devices:[
+        { name:'iPhone 16 Pro Max', w:430,  h:932  },
+        { name:'iPhone 16 Pro',     w:393,  h:852  },
+        { name:'iPhone 16 Plus',    w:430,  h:932  },
+        { name:'iPhone 16',         w:390,  h:844  },
+        { name:'iPhone 15 Pro Max', w:430,  h:932  },
+        { name:'iPhone 15 Pro',     w:393,  h:852  },
+        { name:'iPhone 15',         w:390,  h:844  },
+        { name:'iPhone 14 Pro Max', w:430,  h:932  },
+        { name:'iPhone 14 Pro',     w:393,  h:852  },
+        { name:'iPhone 14',         w:390,  h:844  },
+        { name:'iPhone SE 3rd',     w:375,  h:667  },
+        { name:'iPad Pro 13"',      w:1032, h:1376 },
+        { name:'iPad Air M2',       w:820,  h:1180 },
+        { name:'iPad Mini 7',       w:744,  h:1133 },
+        { name:'MacBook Air 13"',   w:1280, h:800  },
+      ]},
+      { id:'samsung', name:'Samsung', icon:'🌟', devices:[
+        { name:'Galaxy S25 Ultra',   w:412,  h:915  },
+        { name:'Galaxy S25+',        w:412,  h:900  },
+        { name:'Galaxy S25',         w:384,  h:832  },
+        { name:'Galaxy S24 Ultra',   w:412,  h:915  },
+        { name:'Galaxy S24+',        w:412,  h:900  },
+        { name:'Galaxy S24',         w:384,  h:832  },
+        { name:'Galaxy S23 Ultra',   w:412,  h:915  },
+        { name:'Galaxy S23+',        w:412,  h:892  },
+        { name:'Galaxy S23',         w:360,  h:780  },
+        { name:'Galaxy Z Fold 6',    w:968,  h:848  },
+        { name:'Galaxy Z Flip 6',    w:360,  h:780  },
+        { name:'Galaxy A55',         w:384,  h:832  },
+        { name:'Galaxy Tab S9 Ultra',w:960,  h:1368 },
+        { name:'Galaxy Tab S9+',     w:800,  h:1280 },
+        { name:'Galaxy Tab S9',      w:800,  h:1280 },
+      ]},
+      { id:'google',  name:'Google',  icon:'🔵', devices:[
+        { name:'Pixel 9 Pro XL',    w:448,  h:968  },
+        { name:'Pixel 9 Pro',       w:412,  h:915  },
+        { name:'Pixel 9 Pro Fold',  w:992,  h:862  },
+        { name:'Pixel 9',           w:412,  h:915  },
+        { name:'Pixel 8 Pro',       w:448,  h:968  },
+        { name:'Pixel 8a',          w:393,  h:852  },
+        { name:'Pixel 8',           w:412,  h:892  },
+        { name:'Pixel 7 Pro',       w:412,  h:892  },
+        { name:'Pixel 7a',          w:412,  h:892  },
+        { name:'Pixel 7',           w:412,  h:892  },
+        { name:'Pixel 6 Pro',       w:412,  h:892  },
+        { name:'Pixel 6a',          w:412,  h:892  },
+        { name:'Pixel 6',           w:412,  h:892  },
+        { name:'Pixel Fold',        w:840,  h:1080 },
+        { name:'Pixel Tablet',      w:1280, h:800  },
+      ]},
+      { id:'oneplus', name:'OnePlus', icon:'🔴', devices:[
+        { name:'OnePlus 13',        w:412,  h:919  },
+        { name:'OnePlus 12',        w:412,  h:919  },
+        { name:'OnePlus 12R',       w:412,  h:919  },
+        { name:'OnePlus 11',        w:412,  h:919  },
+        { name:'OnePlus Open',      w:412,  h:892  },
+        { name:'OnePlus Nord 4',    w:412,  h:919  },
+        { name:'OnePlus Nord CE4',  w:412,  h:892  },
+        { name:'OnePlus Nord 3',    w:412,  h:892  },
+        { name:'OnePlus Nord 2T',   w:412,  h:892  },
+        { name:'OnePlus 10 Pro',    w:412,  h:919  },
+        { name:'OnePlus 10T',       w:412,  h:919  },
+        { name:'OnePlus 9 Pro',     w:412,  h:892  },
+        { name:'OnePlus 9',         w:412,  h:892  },
+        { name:'OnePlus Pad 2',     w:960,  h:1408 },
+        { name:'OnePlus Pad',       w:960,  h:1408 },
+      ]},
+      { id:'xiaomi',  name:'Xiaomi',  icon:'🔶', devices:[
+        { name:'Xiaomi 15 Ultra',    w:412,  h:919  },
+        { name:'Xiaomi 15 Pro',      w:412,  h:919  },
+        { name:'Xiaomi 15',          w:393,  h:852  },
+        { name:'Xiaomi 14 Ultra',    w:412,  h:915  },
+        { name:'Xiaomi 14 Pro',      w:412,  h:915  },
+        { name:'Xiaomi 14',          w:393,  h:852  },
+        { name:'Redmi Note 14 Pro+', w:393,  h:852  },
+        { name:'Redmi Note 14 Pro',  w:393,  h:852  },
+        { name:'Redmi Note 13 Pro',  w:393,  h:852  },
+        { name:'POCO X7 Pro',        w:412,  h:915  },
+        { name:'POCO F7 Pro',        w:412,  h:915  },
+        { name:'Xiaomi 13T Pro',     w:393,  h:852  },
+        { name:'Xiaomi Pad 7',       w:960,  h:1408 },
+        { name:'Xiaomi Pad 6',       w:1024, h:1366 },
+        { name:'Mix Fold 4',         w:1024, h:848  },
+      ]},
+      { id:'desktop', name:'Desktop', icon:'🖥️', devices:[
+        { name:'MacBook Pro 16"',  w:1728, h:1117 },
+        { name:'MacBook Pro 14"',  w:1512, h:982  },
+        { name:'MacBook Air 15"',  w:1440, h:900  },
+        { name:'MacBook Air 13"',  w:1280, h:800  },
+        { name:'iMac 24"',         w:2240, h:1260 },
+        { name:'Surface Pro 11',   w:1440, h:960  },
+        { name:'Surface Laptop 7', w:1504, h:1000 },
+        { name:'Dell XPS 15',      w:1920, h:1200 },
+        { name:'HP Spectre x360',  w:1920, h:1080 },
+        { name:'Laptop HD 768p',   w:1366, h:768  },
+        { name:'Laptop HD 720p',   w:1280, h:720  },
+        { name:'Laptop FHD',       w:1920, h:1080 },
+        { name:'Desktop FHD',      w:1920, h:1080 },
+        { name:'Desktop QHD',      w:2560, h:1440 },
+        { name:'Desktop 4K',       w:3840, h:2160 },
+      ]},
     ];
 
     // ─── DOM refs ─────────────────────────────────────────────────────────────
@@ -968,8 +1064,6 @@
     const scaleNote     = document.getElementById('scaleNote');
     const statusTime    = document.getElementById('statusTime');
     const themeBtn      = document.getElementById('themeBtn');
-    const deviceList    = document.getElementById('deviceList');
-    const deviceSearch  = document.getElementById('deviceSearch');
     const customW       = document.getElementById('customW');
     const customH       = document.getElementById('customH');
     const customApply   = document.getElementById('customApply');
@@ -981,7 +1075,6 @@
     let isLandscape = false;
     let zoom        = 75;
     let currentUrl  = '';
-    let currentCat  = 'all';
 
     // ─── Clock ────────────────────────────────────────────────────────────────
     function updateClock() {
@@ -997,53 +1090,62 @@
       themeBtn.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
     });
 
-    // ─── Render device buttons ────────────────────────────────────────────────
-    function renderDevices(query = '') {
-      const q = query.toLowerCase();
-      const filtered = DEVICES.filter(d =>
-        (currentCat === 'all' || d.cat === currentCat) &&
-        (!q || d.name.toLowerCase().includes(q))
-      );
-      deviceList.innerHTML = '';
-      if (!filtered.length) {
-        deviceList.innerHTML = '<span style="font-size:12px;color:var(--text3);padding:4px 8px">No devices found</span>';
-        return;
-      }
-      filtered.forEach((d, i) => {
+    // ─── Brand dropdown picker ────────────────────────────────────────────────
+    function closeAllDropdowns() {
+      document.querySelectorAll('.brand-dropdown').forEach(d => d.classList.remove('open'));
+      document.querySelectorAll('.brand-btn').forEach(b => b.classList.remove('open'));
+    }
+    document.addEventListener('click', closeAllDropdowns);
+
+    function renderBrands() {
+      const row = document.getElementById('brandRow');
+      row.innerHTML = '';
+      BRANDS.forEach(brand => {
+        const wrap = document.createElement('div');
+        wrap.className = 'brand-wrap';
+
+        const hasActive = brand.devices.some(d => d.name === currentName);
         const btn = document.createElement('button');
-        btn.className = 'device-btn' + (d.name === currentName ? ' active' : '');
-        btn.dataset.w    = d.w;
-        btn.dataset.h    = d.h;
-        btn.dataset.name = d.name;
-        btn.title        = `${d.w} × ${d.h}`;
-        btn.textContent  = `${d.icon} ${d.name}`;
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentW    = d.w;
-          currentH    = d.h;
-          currentName = d.name;
-          customW.value = '';
-          customH.value = '';
-          applyDevice();
+        btn.className = 'brand-btn' + (hasActive ? ' has-active' : '');
+        btn.innerHTML = `<span>${brand.icon} ${brand.name}</span><span class="brand-chevron">▾</span>`;
+
+        const dropdown = document.createElement('div');
+        dropdown.className = 'brand-dropdown';
+
+        brand.devices.forEach(d => {
+          const item = document.createElement('button');
+          item.className = 'brand-device-item' + (d.name === currentName ? ' active' : '');
+          item.innerHTML = `<span>${d.name}</span><span class="device-dim">${d.w}×${d.h}</span>`;
+          item.addEventListener('click', e => {
+            e.stopPropagation();
+            currentW    = d.w;
+            currentH    = d.h;
+            currentName = d.name;
+            customW.value = '';
+            customH.value = '';
+            closeAllDropdowns();
+            renderBrands();
+            applyDevice();
+          });
+          dropdown.appendChild(item);
         });
-        deviceList.appendChild(btn);
+
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const wasOpen = dropdown.classList.contains('open');
+          closeAllDropdowns();
+          if (!wasOpen) {
+            dropdown.classList.add('open');
+            btn.classList.add('open');
+          }
+        });
+
+        wrap.appendChild(btn);
+        wrap.appendChild(dropdown);
+        row.appendChild(wrap);
       });
     }
-    renderDevices();
-
-    // Category tabs
-    document.querySelectorAll('.cat-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        currentCat = tab.dataset.cat;
-        renderDevices(deviceSearch.value);
-      });
-    });
-
-    // Search
-    deviceSearch.addEventListener('input', () => renderDevices(deviceSearch.value));
+    renderBrands();
 
     // ─── URL input ───────────────────────────────────────────────────────────
     urlInput.addEventListener('input', () => {
@@ -1256,7 +1358,7 @@
         currentW    = pW;
         currentH    = pH;
         currentName = decodeURIComponent(pDevice);
-        renderDevices();
+        renderBrands();
       }
       urlInput.value = params.get('url');
       urlClear.classList.add('visible');
