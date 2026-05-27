@@ -66,7 +66,7 @@ function decompress(buf, encoding) {
   });
 }
 
-function rewriteHtml(html, finalUrl) {
+function rewriteHtml(html, finalUrl, proxyOrigin) {
   const parsed = new URL(finalUrl);
   const origin = `${parsed.protocol}//${parsed.host}`;
   const base   = finalUrl.includes('?')
@@ -84,6 +84,19 @@ function rewriteHtml(html, finalUrl) {
 
   html = html.replace(/(\s(?:src|href|action|data-src|data-href|poster)=["'])\/(?!\/)/gi, `$1${origin}/`);
   html = html.replace(/(url\(["']?)\/(?!\/)/gi, `$1${origin}/`);
+
+  // Server-side: rewrite all <a href> through proxy (most reliable, no JS needed)
+  html = html.replace(/<a(\s[^>]*?)>/gi, (match, attrs) => {
+    const newAttrs = attrs.replace(/(\s)(href=)(["'])([^"']*)\3/i, (m, sp, eq, q, href) => {
+      const h = href.trim();
+      if (!h || /^(#|javascript:|mailto:|tel:|data:|blob:)/i.test(h)) return m;
+      try {
+        const abs = new URL(h, finalUrl).href;
+        return `${sp}${eq}${q}${proxyOrigin}/proxy?url=${encodeURIComponent(abs)}${q}`;
+      } catch(e) { return m; }
+    });
+    return `<a${newAttrs}>`;
+  });
 
   // 5. Inject comprehensive navigation interceptor
   const navScript = `\n<script data-vop="nav">
@@ -189,6 +202,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const { res: upstream, finalUrl } = await fetchUrl(targetUrl);
+    const proxyOrigin = `https://${req.headers.host || 'www.viewonphone.com'}`;
 
     const outHeaders = { 'Access-Control-Allow-Origin': '*' };
     for (const [k, v] of Object.entries(upstream.headers)) {
@@ -211,7 +225,7 @@ module.exports = async function handler(req, res) {
     catch { bodyBuf = rawBuf; }
 
     let html = bodyBuf.toString('utf-8');
-    html = rewriteHtml(html, finalUrl);
+    html = rewriteHtml(html, finalUrl, proxyOrigin);
 
     delete outHeaders['content-encoding'];
     delete outHeaders['content-length'];

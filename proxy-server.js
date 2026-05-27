@@ -101,7 +101,7 @@ function decompress(buf, encoding) {
 }
 
 // ─── rewrite HTML so resources load from the original origin ─────────────────
-function rewriteHtml(html, finalUrl) {
+function rewriteHtml(html, finalUrl, proxyOrigin) {
   const parsed  = new URL(finalUrl);
   const origin  = `${parsed.protocol}//${parsed.host}`;
   // base = directory of the page
@@ -131,6 +131,19 @@ function rewriteHtml(html, finalUrl) {
 
   // 4. Rewrite CSS url('/...') absolute paths
   html = html.replace(/(url\(["']?)\/(?!\/)/gi, `$1${origin}/`);
+
+  // 5. Server-side: rewrite all <a href> through proxy (no JS needed)
+  html = html.replace(/<a(\s[^>]*?)>/gi, (match, attrs) => {
+    const newAttrs = attrs.replace(/(\s)(href=)(["'])([^"']*)\3/i, (m, sp, eq, q, href) => {
+      const h = href.trim();
+      if (!h || /^(#|javascript:|mailto:|tel:|data:|blob:)/i.test(h)) return m;
+      try {
+        const abs = new URL(h, finalUrl).href;
+        return `${sp}${eq}${q}${proxyOrigin}/proxy?url=${encodeURIComponent(abs)}${q}`;
+      } catch(e) { return m; }
+    });
+    return `<a${newAttrs}>`;
+  });
 
   // 5. Inject comprehensive navigation interceptor
   const navScript = `\n<script data-vop="nav">
@@ -286,8 +299,9 @@ const server = http.createServer(async (req, res) => {
     try   { bodyBuf = await decompress(rawBuf, encoding); }
     catch { bodyBuf = rawBuf; }
 
+    const proxyOrigin = `http://localhost:${PORT}`;
     let html = bodyBuf.toString('utf-8');
-    html = rewriteHtml(html, finalUrl);
+    html = rewriteHtml(html, finalUrl, proxyOrigin);
 
     delete outHeaders['content-encoding'];
     delete outHeaders['content-length'];
